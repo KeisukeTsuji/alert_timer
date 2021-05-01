@@ -14,6 +14,7 @@
   box-sizing: border-box;
   border-style: solid;
   border-width: 0;
+  font-family: YakuHanJP,Roboto,"Kinto Sans","Helvetica Neue","Segoe UI",Helvetica,"游ゴシック体",YuGothic,"Yu Gothic M","游ゴシック Medium","Yu Gothic Medium","メイリオ",Meiryo,sans-serif;
 }
 
 /* Document */
