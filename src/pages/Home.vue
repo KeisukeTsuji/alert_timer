@@ -15,18 +15,35 @@
       </div>
       <div class="schedule-contents">
         <div class="schedule-input-wrapper">
-          <input placeholder="予定内容を入力" type="text" maxlength="30" />
+          <input
+            v-model="contents"
+            placeholder="予定内容を入力"
+            type="text"
+            maxlength="30"
+          />
         </div>
         <div class="time-container">
           <div class="time-container__hour-wrapper">
-            <input min="0" max="23" type="number" placeholder="時" />
+            <input
+              v-model="state.selectTime.HH"
+              min="0"
+              max="23"
+              type="number"
+              placeholder="時"
+            />
           </div>
           <div class="time-container__minutes-wrapper">
-            <input min="0" max="59" type="number" placeholder="分" />
+            <input
+              v-model="state.selectTime.mm"
+              min="0"
+              max="59"
+              type="number"
+              placeholder="分"
+            />
           </div>
         </div>
         <div>
-          <button class="create-button">登録</button>
+          <button class="create-button" @click="createSchedule">登録</button>
         </div>
       </div>
       <div class="schedule-list">
@@ -40,9 +57,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td class="td-1"></td>
-                <td class="td-2">9:00</td>
+              <tr
+                v-for="(alertInfo, i) in state.alertList"
+                :key="`alertInfo${i}`"
+              >
+                <td class="td-1">{{ alertInfo.contents }}</td>
+                <td class="td-2">
+                  {{ alertInfo.selectTime.HH }}:{{ alertInfo.selectTime.mm }}
+                </td>
                 <td class="td-3"><button>削除</button></td>
               </tr>
             </tbody>
@@ -59,12 +81,24 @@ import { ref } from "vue";
 
 export default defineComponent({
   setup() {
+    // TODO interface 別ファイルにまとめたい
+    interface SelectTime {
+      HH: null | string;
+      mm: null | string;
+    }
+    interface AlertList {
+      contents: string;
+      selectTime: SelectTime;
+    }
+
     const state = reactive({
-      timepicker: {
-        HH: "20",
-        mm: "00",
-      },
+      selectTime: {
+        HH: null,
+        mm: null,
+      } as SelectTime,
+      alertList: [] as AlertList[],
     });
+    const contents = ref("");
     const date = ref("");
     const time = ref("");
     const week = ["(日)", "(月)", "(火)", "(水)", "(木)", "(金)", "(土)"];
@@ -95,13 +129,61 @@ export default defineComponent({
         week[cd.getDay()];
     };
 
+    const getItems = (itemName: string) => {
+      const getItems = localStorage.getItem(itemName);
+      if (getItems) {
+        return JSON.parse(getItems);
+      } else {
+        return [];
+      }
+    };
+
+    const setItem = (key: string, item: string) => {
+      localStorage.setItem(key, item);
+    };
+
+    const alertMessage = (message: string) => {
+      alert(message);
+    };
+
+    const resetInputContents = () => {
+      state.selectTime = {
+        HH: null,
+        mm: null,
+      };
+      contents.value = "";
+    };
+
+    const createSchedule = () => {
+      const itemName = "alertList";
+      const createdlist = getItems(itemName);
+      const alertItem = {
+        contents: contents.value,
+        selectTime: state.selectTime,
+      };
+      createdlist.push(alertItem);
+      setItem(itemName, JSON.stringify(createdlist));
+      state.alertList = createdlist;
+      alertMessage("登録しました");
+      resetInputContents();
+    };
+
+    const getSchedule = () => {
+      const itemName = "alertList";
+      const createdlist = getItems(itemName);
+      state.alertList = createdlist;
+    };
+
     setInterval(updateTime, 1000);
     updateTime();
+    getSchedule();
 
     return {
+      contents,
       date,
       time,
       state,
+      createSchedule,
     };
   },
 });
@@ -126,7 +208,7 @@ export default defineComponent({
   .clock {
     text-align: center;
     color: #2196f3;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
     &__time {
       letter-spacing: 0.05em;
       font-size: 64px;
@@ -165,7 +247,8 @@ export default defineComponent({
     border-bottom-right-radius: 5px;
   }
   .schedule-list {
-    height: calc(100% - 311px);
+    height: calc(100% - 303px);
+    overflow: auto;
     table {
       width: 100%;
       border-collapse: separate;
