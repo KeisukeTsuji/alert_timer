@@ -159,7 +159,24 @@ export default defineComponent({
       contents.value = "";
     };
 
+    const isCreateScheduleValidation = () => {
+      if (!contents.value) {
+        return true;
+      } else if (Number(state.selectTime.HH) < 0) {
+        return true;
+      } else if (Number(state.selectTime.mm) < 0) {
+        return true;
+      }
+      return false;
+    };
+
     const createSchedule = () => {
+      if (isCreateScheduleValidation()) {
+        alert(
+          "未入力箇所または無効な入力がございます。入力内容をご確認ください。"
+        );
+        return;
+      }
       const itemName = "alertList";
       const createdlist = getItems(itemName);
       const alertItem = {
