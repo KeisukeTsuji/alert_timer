@@ -162,9 +162,15 @@ export default defineComponent({
     const isCreateScheduleValidation = () => {
       if (!contents.value) {
         return true;
-      } else if (Number(state.selectTime.HH) < 0 || Number(state.selectTime.HH) > 12) {
+      } else if (
+        Number(state.selectTime.HH) < 0 ||
+        Number(state.selectTime.HH) > 12
+      ) {
         return true;
-      } else if (Number(state.selectTime.mm) < 0 || Number(state.selectTime.mm) > 59) {
+      } else if (
+        Number(state.selectTime.mm) < 0 ||
+        Number(state.selectTime.mm) > 59
+      ) {
         return true;
       }
       return false;
@@ -268,6 +274,9 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
+$main-color: #2196f3;
+$border-color: #cfd8dc;
+
 .home-container {
   .home-wrapper {
     width: 720px;
@@ -281,11 +290,14 @@ export default defineComponent({
     margin-bottom: 24px;
   }
   .logo-wrapper {
-    margin-bottom: 24px;
+    margin-bottom: 40px;
+    img {
+      width: 240px;
+    }
   }
   .clock {
     text-align: center;
-    color: #2196f3;
+    color: $main-color;
     margin-bottom: 24px;
     &__time {
       letter-spacing: 0.05em;
@@ -299,7 +311,7 @@ export default defineComponent({
   .schedule-input-wrapper {
     width: 100%;
     input {
-      border: 1px solid #cfd8dc;
+      border: 1px solid $border-color;
       padding: 0.3em 0.5em;
       height: 2.2em;
       border-right: none;
@@ -315,8 +327,8 @@ export default defineComponent({
     margin-bottom: 24px;
   }
   .create-button {
-    border: 1px solid #2196f3;
-    background: #2196f3;
+    border: 1px solid $main-color;
+    background: $main-color;
     color: white;
     height: 2.2em;
     width: max-content;
@@ -325,7 +337,7 @@ export default defineComponent({
     border-bottom-right-radius: 5px;
   }
   .schedule-list {
-    height: calc(100% - 303px);
+    height: calc(100% - 292px);
     overflow: auto;
     table {
       width: 100%;
@@ -337,26 +349,26 @@ export default defineComponent({
     }
     table th:last-child {
       border-radius: 0 5px 0 0;
-      border-right: 1px solid #2196f3;
+      border-right: 1px solid $main-color;
     }
     table th {
       text-align: center;
       color: white;
-      background-color: #2196f3;
-      border-left: 1px solid #2196f3;
-      border-top: 1px solid #2196f3;
-      border-bottom: 1px solid #2196f3;
+      background-color: $main-color;
+      border-left: 1px solid $main-color;
+      border-top: 1px solid $main-color;
+      border-bottom: 1px solid $main-color;
       padding: 8px;
     }
     table td {
-      border-left: 1px solid #cfd8dc;
-      border-bottom: 1px solid #cfd8dc;
+      border-left: 1px solid $border-color;
+      border-bottom: 1px solid $border-color;
       border-top: none;
       padding: 8px;
       vertical-align: inherit;
     }
     table td:last-child {
-      border-right: 1px solid #cfd8dc;
+      border-right: 1px solid $border-color;
     }
     table tr:last-child td:first-child {
       border-radius: 0 0 0 5px;
@@ -393,14 +405,14 @@ export default defineComponent({
   .time-container {
     display: flex;
     &__hour-wrapper {
-      border: 1px solid #cfd8dc;
+      border: 1px solid $border-color;
       padding: 0.3em 0.5em;
       height: 2.2em;
       border-right: none;
       width: 64px;
     }
     &__minutes-wrapper {
-      border: 1px solid #cfd8dc;
+      border: 1px solid $border-color;
       padding: 0.3em 0.5em;
       height: 2.2em;
       border-right: none;
