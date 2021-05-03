@@ -63,7 +63,9 @@
               >
                 <td class="td-1">{{ alertInfo.contents }}</td>
                 <td class="td-2">
-                  {{ alertInfo.selectTime.HH }}:{{ alertInfo.selectTime.mm }}
+                  {{ formingTime(alertInfo.selectTime.HH) }}:{{
+                    formingTime(alertInfo.selectTime.mm)
+                  }}
                 </td>
                 <td class="td-3">
                   <button @click="deleteSchedule(alertInfo.id)">削除</button>
@@ -78,13 +80,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, watch } from "vue";
 import { ref } from "vue";
 import { v4 as uuidv4 } from "uuid";
 
 export default defineComponent({
   setup() {
-    // TODO interface 別ファイルにまとめたい
     interface SelectTime {
       HH: null | string;
       mm: null | string;
@@ -186,6 +187,52 @@ export default defineComponent({
       setItem(itemName, JSON.stringify(alertList));
     };
 
+    const formingTime = (time: string | null) => {
+      if (time !== null) {
+        if (time.length === 1) {
+          return `0${time}`;
+        }
+      }
+      return time;
+    };
+
+    const removeInitialZero = (time: string) => {
+      if (time.length === 2 && time[0] === "0") {
+        return time[1];
+      }
+      return time;
+    };
+
+    const createDate = (hour: number, minutes: number, seconds: number) => {
+      const date = new Date();
+      date.setHours(hour);
+      date.setMinutes(minutes);
+      date.setSeconds(seconds);
+      return date;
+    };
+
+    watch(time, () => {
+      const timeArr = time.value.split(":");
+      for (const a of state.alertList) {
+        const hour = Number(removeInitialZero(timeArr[0]));
+        const minutes = Number(removeInitialZero(timeArr[1]));
+        const seconds = Number(removeInitialZero(timeArr[2]));
+        const now = createDate(hour, minutes, seconds);
+        const settingHour = Number(a.selectTime.HH);
+        const settingMinutes = Number(a.selectTime.mm);
+        const settingDate = createDate(settingHour, settingMinutes, 0);
+        const before5Min = settingDate.getTime() - 300000;
+        const before5MinDate = new Date(before5Min);
+        if (
+          now.getHours() === before5MinDate.getHours() &&
+          now.getMinutes() === before5MinDate.getMinutes() &&
+          now.getSeconds() === 0
+        ) {
+          alert(`${a.contents}の5分前をお知らせします。`);
+        }
+      }
+    });
+
     setInterval(updateTime, 1000);
     updateTime();
     getSchedule();
@@ -197,6 +244,7 @@ export default defineComponent({
       state,
       createSchedule,
       deleteSchedule,
+      formingTime,
     };
   },
 });
