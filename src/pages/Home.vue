@@ -83,6 +83,7 @@
 import { defineComponent, reactive, watch } from "vue";
 import { ref } from "vue";
 import { v4 as uuidv4 } from "uuid";
+import Swal from "sweetalert2";
 
 export default defineComponent({
   setup() {
@@ -257,7 +258,7 @@ export default defineComponent({
           now.getMinutes() === before5MinDate.getMinutes() &&
           now.getSeconds() === 0
         ) {
-          alert(`${a.contents}の5分前をお知らせします。`);
+          Swal.fire(a.contents, "の5分前をお知らせします。");
         }
       }
     });
