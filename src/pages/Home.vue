@@ -65,7 +65,9 @@
                 <td class="td-2">
                   {{ alertInfo.selectTime.HH }}:{{ alertInfo.selectTime.mm }}
                 </td>
-                <td class="td-3"><button>削除</button></td>
+                <td class="td-3">
+                  <button @click="deleteSchedule(alertInfo.id)">削除</button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -78,6 +80,7 @@
 <script lang="ts">
 import { defineComponent, reactive } from "vue";
 import { ref } from "vue";
+import { v4 as uuidv4 } from "uuid";
 
 export default defineComponent({
   setup() {
@@ -87,6 +90,7 @@ export default defineComponent({
       mm: null | string;
     }
     interface AlertList {
+      id: string;
       contents: string;
       selectTime: SelectTime;
     }
@@ -158,10 +162,11 @@ export default defineComponent({
       const itemName = "alertList";
       const createdlist = getItems(itemName);
       const alertItem = {
+        id: uuidv4(),
         contents: contents.value,
         selectTime: state.selectTime,
       };
-      createdlist.push(alertItem);
+      createdlist.unshift(alertItem);
       setItem(itemName, JSON.stringify(createdlist));
       state.alertList = createdlist;
       alertMessage("登録しました");
@@ -174,6 +179,13 @@ export default defineComponent({
       state.alertList = createdlist;
     };
 
+    const deleteSchedule = (id: string) => {
+      const alertList = state.alertList.filter((a) => a.id !== id);
+      state.alertList = alertList;
+      const itemName = "alertList";
+      setItem(itemName, JSON.stringify(alertList));
+    };
+
     setInterval(updateTime, 1000);
     updateTime();
     getSchedule();
@@ -184,6 +196,7 @@ export default defineComponent({
       time,
       state,
       createSchedule,
+      deleteSchedule,
     };
   },
 });
