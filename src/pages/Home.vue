@@ -6,7 +6,7 @@
       </div>
       <div class="desc">
         <p>
-          予定内容と開始時刻を登録することで、予定の5分前にアラートでお知らせします。
+          予定内容と開始時刻を登録することで予定の5分前にアラートでお知らせします。
         </p>
       </div>
       <div class="clock">
@@ -162,9 +162,9 @@ export default defineComponent({
     const isCreateScheduleValidation = () => {
       if (!contents.value) {
         return true;
-      } else if (Number(state.selectTime.HH) < 0) {
+      } else if (Number(state.selectTime.HH) < 0 || Number(state.selectTime.HH) > 12) {
         return true;
-      } else if (Number(state.selectTime.mm) < 0) {
+      } else if (Number(state.selectTime.mm) < 0 || Number(state.selectTime.mm) > 59) {
         return true;
       }
       return false;
