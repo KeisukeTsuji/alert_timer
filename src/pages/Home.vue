@@ -164,7 +164,7 @@ export default defineComponent({
         return true;
       } else if (
         Number(state.selectTime.HH) < 0 ||
-        Number(state.selectTime.HH) > 12
+        Number(state.selectTime.HH) > 24
       ) {
         return true;
       } else if (
@@ -204,6 +204,12 @@ export default defineComponent({
     };
 
     const deleteSchedule = (id: string) => {
+      const result = window.confirm("本当に削除しますか？");
+      if (result) {
+        alert("削除しました。");
+      } else {
+        return;
+      }
       const alertList = state.alertList.filter((a) => a.id !== id);
       state.alertList = alertList;
       const itemName = "alertList";
