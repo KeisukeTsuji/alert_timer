@@ -48,11 +48,11 @@ export default defineComponent({
     },
     hour: {
       type: String,
-      required: true,
+      required: false,
     },
     minutes: {
       type: String,
-      required: true,
+      required: false,
     },
     createSchedule: {
       type: Function,
