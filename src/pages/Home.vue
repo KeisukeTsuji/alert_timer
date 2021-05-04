@@ -2,79 +2,28 @@
   <div class="home-container">
     <div class="home-wrapper">
       <div class="logo-wrapper">
-        <img src="../assets/logo.png" alt="logo" />
+        <Logo />
       </div>
-      <div class="desc">
-        <p>
+      <div class="desc-wrapper">
+        <p class="desc-wrapper__desc">
           予定内容と開始時刻を登録することで予定の5分前にアラートでお知らせします。
         </p>
       </div>
-      <div class="clock">
-        <p class="clock__date">{{ date }}</p>
-        <p class="clock__time">{{ time }}</p>
-      </div>
-      <div class="schedule-contents">
-        <div class="schedule-input-wrapper">
-          <input
-            v-model="contents"
-            placeholder="予定内容を入力"
-            type="text"
-            maxlength="30"
-          />
-        </div>
-        <div class="time-container">
-          <div class="time-container__hour-wrapper">
-            <input
-              v-model="state.selectTime.HH"
-              min="0"
-              max="23"
-              type="number"
-              placeholder="時"
-            />
-          </div>
-          <div class="time-container__minutes-wrapper">
-            <input
-              v-model="state.selectTime.mm"
-              min="0"
-              max="59"
-              type="number"
-              placeholder="分"
-            />
-          </div>
-        </div>
-        <div>
-          <button class="create-button" @click="createSchedule">登録</button>
-        </div>
-      </div>
-      <div class="schedule-list">
-        <div class="table-wrapper">
-          <table border="5" bordercolor="red">
-            <thead>
-              <tr>
-                <th class="th-1" width="60%" colspan="1">予定内容</th>
-                <th class="th-2" width="25%" colspan="1">開始時刻</th>
-                <th width="15%" colspan="1"></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="(alertInfo, i) in state.alertList"
-                :key="`alertInfo${i}`"
-              >
-                <td class="td-1">{{ alertInfo.contents }}</td>
-                <td class="td-2">
-                  {{ formingTime(alertInfo.selectTime.HH) }}:{{
-                    formingTime(alertInfo.selectTime.mm)
-                  }}
-                </td>
-                <td class="td-3">
-                  <button @click="deleteSchedule(alertInfo.id)">削除</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <Clock :date="date" :time="time" />
+      <ScheduleForm
+        :contents="contents"
+        :hour="state.selectTime.HH"
+        :minutes="state.selectTime.mm"
+        :createSchedule="createSchedule"
+        v-model:contents="contents"
+        v-model:hour="state.selectTime.HH"
+        v-model:minutes="state.selectTime.mm"
+      />
+      <ScheduleList
+        :alertList="state.alertList"
+        :formingTime="formingTime"
+        :deleteSchedule="deleteSchedule"
+      />
     </div>
   </div>
 </template>
@@ -84,19 +33,21 @@ import { defineComponent, reactive, watch } from "vue";
 import { ref } from "vue";
 import { v4 as uuidv4 } from "uuid";
 import Swal from "sweetalert2";
+import { SelectTime, AlertList } from "@/types/interface";
+
+import Logo from "@/components/Logo.vue";
+import Clock from "@/components/Clock.vue";
+import ScheduleForm from "@/components/ScheduleForm.vue";
+import ScheduleList from "@/components/ScheduleList.vue";
 
 export default defineComponent({
+  components: {
+    Logo,
+    Clock,
+    ScheduleForm,
+    ScheduleList,
+  },
   setup() {
-    interface SelectTime {
-      HH: null | string;
-      mm: null | string;
-    }
-    interface AlertList {
-      id: string;
-      contents: string;
-      selectTime: SelectTime;
-    }
-
     const state = reactive({
       selectTime: {
         HH: null,
@@ -293,140 +244,13 @@ $border-color: #cfd8dc;
     background-color: #ffffff;
   }
   background: #bbdefb;
-  .desc {
+  .desc-wrapper {
     margin-bottom: 24px;
   }
   .logo-wrapper {
     margin-bottom: 40px;
     img {
       width: 240px;
-    }
-  }
-  .clock {
-    text-align: center;
-    color: $main-color;
-    margin-bottom: 24px;
-    &__time {
-      letter-spacing: 0.05em;
-      font-size: 64px;
-    }
-    &__date {
-      letter-spacing: 0.1em;
-      font-size: 24px;
-    }
-  }
-  .schedule-input-wrapper {
-    width: 100%;
-    input {
-      border: 1px solid $border-color;
-      padding: 0.3em 0.5em;
-      height: 2.2em;
-      border-right: none;
-      width: 100%;
-      border-top-left-radius: 5px;
-      border-bottom-left-radius: 5px;
-    }
-  }
-  .schedule-contents {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    margin-bottom: 24px;
-  }
-  .create-button {
-    border: 1px solid $main-color;
-    background: $main-color;
-    color: white;
-    height: 2.2em;
-    width: max-content;
-    padding: 0.3em 0.5em;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-  }
-  .schedule-list {
-    height: calc(100% - 292px);
-    overflow: auto;
-    table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-    }
-    table th:first-child {
-      border-radius: 5px 0 0 0;
-    }
-    table th:last-child {
-      border-radius: 0 5px 0 0;
-      border-right: 1px solid $main-color;
-    }
-    table th {
-      text-align: center;
-      color: white;
-      background-color: $main-color;
-      border-left: 1px solid $main-color;
-      border-top: 1px solid $main-color;
-      border-bottom: 1px solid $main-color;
-      padding: 8px;
-    }
-    table td {
-      border-left: 1px solid $border-color;
-      border-bottom: 1px solid $border-color;
-      border-top: none;
-      padding: 8px;
-      vertical-align: inherit;
-    }
-    table td:last-child {
-      border-right: 1px solid $border-color;
-    }
-    table tr:last-child td:first-child {
-      border-radius: 0 0 0 5px;
-    }
-    table tr:last-child td:last-child {
-      border-radius: 0 0 5px 0;
-    }
-    table thead th {
-      position: -webkit-sticky;
-      position: sticky;
-      top: 0;
-      z-index: 1;
-    }
-    .td-1 {
-      width: 60%;
-      white-space: pre-wrap;
-    }
-    .td-2 {
-      width: 25%;
-      white-space: pre-wrap;
-    }
-    .td-3 {
-      width: 15%;
-      white-space: pre-wrap;
-      text-align: center;
-      button {
-        padding: 0.3em 0.5em;
-        border-radius: 5px;
-        background-color: #e53935;
-        color: white;
-      }
-    }
-  }
-  .time-container {
-    display: flex;
-    &__hour-wrapper {
-      border: 1px solid $border-color;
-      padding: 0.3em 0.5em;
-      height: 2.2em;
-      border-right: none;
-      width: 64px;
-    }
-    &__minutes-wrapper {
-      border: 1px solid $border-color;
-      padding: 0.3em 0.5em;
-      height: 2.2em;
-      border-right: none;
-      width: 64px;
-    }
-    input {
-      width: 100%;
     }
   }
 }
