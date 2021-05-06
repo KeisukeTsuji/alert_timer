@@ -12,8 +12,7 @@
       <Clock :date="date" :time="time" />
       <ScheduleForm
         :contents="contents"
-        :hour="state.selectTime.HH"
-        :minutes="state.selectTime.mm"
+        :selectTime="state.selectTime"
         :createSchedule="createSchedule"
         v-model:contents="contents"
         v-model:hour="state.selectTime.HH"

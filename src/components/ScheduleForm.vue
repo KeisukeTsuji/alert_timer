@@ -12,7 +12,7 @@
     <div class="time-container">
       <div class="time-container__hour-wrapper">
         <input
-          :value="hour"
+          :value="selectTime.HH"
           @input="$emit('update:hour', $event.target.value)"
           min="0"
           max="23"
@@ -22,7 +22,7 @@
       </div>
       <div class="time-container__minutes-wrapper">
         <input
-          :value="minutes"
+          :value="selectTime.mm"
           @input="$emit('update:minutes', $event.target.value)"
           min="0"
           max="59"
@@ -38,7 +38,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { SelectTime } from "@/types/interface";
+import { defineComponent, PropType } from "vue";
 
 export default defineComponent({
   props: {
@@ -46,13 +47,9 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    hour: {
-      type: String,
-      required: false,
-    },
-    minutes: {
-      type: String,
-      required: false,
+    selectTime: {
+      type: Object as PropType<SelectTime>,
+      required: true,
     },
     createSchedule: {
       type: Function,
