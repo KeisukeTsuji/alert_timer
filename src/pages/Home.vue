@@ -110,18 +110,32 @@ export default defineComponent({
       contents.value = "";
     };
 
-    const isCreateScheduleValidation = () => {
-      if (!contents.value) {
-        return true;
-      } else if (
+    const isContentsValid = () => {
+      return !contents.value;
+    };
+
+    const isHourValidation = () => {
+      return (
+        !state.selectTime.HH ||
         Number(state.selectTime.HH) < 0 ||
         Number(state.selectTime.HH) > 24
-      ) {
-        return true;
-      } else if (
+      );
+    };
+
+    const isMinutesValidation = () => {
+      return (
+        !state.selectTime.mm ||
         Number(state.selectTime.mm) < 0 ||
         Number(state.selectTime.mm) > 59
-      ) {
+      );
+    };
+
+    const isCreateScheduleValidation = () => {
+      if (isContentsValid()) {
+        return true;
+      } else if (isHourValidation()) {
+        return true;
+      } else if (isMinutesValidation()) {
         return true;
       }
       return false;
