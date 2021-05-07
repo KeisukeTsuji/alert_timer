@@ -10,15 +10,20 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="alertInfo in alertList" :key="alertInfo.id">
-            <td class="td-1">{{ alertInfo.contents }}</td>
-            <td class="td-2">
+          <tr v-for="(alertInfo, i) in alertList" :key="alertInfo.id">
+            <td class="td-1" :id="`td_1_${i}`">{{ alertInfo.contents }}</td>
+            <td class="td-2" :id="`td_2_${i}`">
               {{ formingTime(alertInfo.selectTime.HH) }}:{{
                 formingTime(alertInfo.selectTime.mm)
               }}
             </td>
             <td class="td-3">
-              <button @click="deleteSchedule(alertInfo.id)">削除</button>
+              <button
+                :id="`delete_button_${i}`"
+                @click="deleteSchedule(alertInfo.id)"
+              >
+                削除
+              </button>
             </td>
           </tr>
         </tbody>

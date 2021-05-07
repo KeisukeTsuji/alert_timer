@@ -3,9 +3,9 @@ import Home from "@/pages/Home.vue";
 import ScheduleForm from "@/components/ScheduleForm.vue";
 import ScheduleList from "@/components/ScheduleList.vue";
 
-// alertでエラーを吐くのでnullに
-window.alert = jest.fn();
-window.alert = () => null;
+// alert, confirmのエラー対応
+window.alert = jest.fn(() => true);
+window.confirm = jest.fn(() => true);
 
 describe("ScheduleForm.vue", () => {
   test("propsを受け取れること", () => {
@@ -65,13 +65,26 @@ describe("ScheduleList.vue", () => {
 });
 
 describe("Home.vue", () => {
-  test("登録ボタンクリック後にtableに登録内容が反映されるか", async () => {
+  test("登録ボタンクリック後にtableに登録内容が反映され、削除ボタンで該当項目を削除できるか", async () => {
     const wrapper = mount(Home);
     // console.log(wrapper.html());
-    wrapper.vm.contents = "test";
+    // 1回目の入力
+    wrapper.vm.contents = "test1";
     wrapper.vm.state.selectTime = { HH: "1", mm: "2" };
     await wrapper.find(".create-button").trigger("click");
-    expect(wrapper.find(".td-1").text()).toMatch("test");
-    expect(wrapper.find(".td-2").text()).toMatch("01:02");
+    expect(wrapper.find("#td_1_0").text()).toMatch("test1");
+    expect(wrapper.find("#td_2_0").text()).toMatch("01:02");
+    // 2回目の入力
+    wrapper.vm.contents = "test2";
+    wrapper.vm.state.selectTime = { HH: "3", mm: "4" };
+    await wrapper.find(".create-button").trigger("click");
+    expect(wrapper.find("#td_1_0").text()).toMatch("test2");
+    expect(wrapper.find("#td_2_0").text()).toMatch("03:04");
+    // test2の削除
+    await wrapper.find("#delete_button_0").trigger("click");
+    expect(wrapper.find("#td_1_0").text()).toMatch("test1");
+    expect(wrapper.find("#td_2_0").text()).toMatch("01:02");
+    expect(wrapper.find("#td_1_1").exists()).toBe(false);
+    expect(wrapper.find("#td_2_1").exists()).toBe(false);
   });
 });
